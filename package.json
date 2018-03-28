@@ -1,0 +1,18 @@
+{
+  "name": "promise-event-emitter",
+  "version": "0.1.0",
+  "description": "This description",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/letry/promise-event-emitter"
+  },
+  "keywords": [
+    "promise-event-emitter"
+  ],
+  "author": "letry",
+  "license": "ISC"
+}
