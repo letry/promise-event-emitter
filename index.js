@@ -18,20 +18,19 @@ module.exports = class {
     on(successEvents = [], rejectEvents = []) {
         return Promise.race([
             ...[].concat(successEvents).map(eventName => this.once(eventName)),
-            ...[].concat(rejectEvents).map(eventName => this.once(eventName).then(data => Promise.reject(data)))
+            ...[].concat(rejectEvents).map(eventName => this.once(eventName)
+                .then(data => Promise.reject(data)))
         ]);
     }
     all(events = []) {
         return Promise.all(events.map(eventName => this.once(eventName)));
     }
-    off(event, reason = 'Handler was removed') {
-        return this._abstract(event, 'reject', reason);
+    off(event, type = 'pass', reason = 'Handler removed') {
+        if (type !== 'pass') (this.eventPromiseMap.get(event) || {[type](){}})[type]([reason]);
+        return this.eventPromiseMap.delete(event);
     }
     emit(event, ...args) {
-        return this._abstract(event, 'resolve', ...args);
-    }
-    _abstract(event, type, ...args) {
-        (this.eventPromiseMap.get(event) || {[type](){}})[type](args);
+        (this.eventPromiseMap.get(event) || {resolve(){}}).resolve(args);
         return this.eventPromiseMap.delete(event);
     }
     eventNames() {

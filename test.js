@@ -15,9 +15,9 @@ const tests = {
         emitter.emit('event', ...args);
     },
     'once event'(resolve, reject, emitter) {
-        emitter.once('event')
-            .then(resolve)
-            .catch(reject);
+        const promise1 = emitter.once('event');
+        const promise2 = emitter.once('event');
+        if (promise1 === promise2) promise1.then(resolve, reject)
         emitter.emit('event');
     },
     'event resolve'(resolve, reject, emitter) {
@@ -53,7 +53,7 @@ const tests = {
         emitter.once('event')
             .then(reject)
             .catch(resolve);
-        emitter.off('event');
+        emitter.off('event', 'reject');
     },
     'remove listeners'(resolve, reject, emitter) {
         Promise.all([
@@ -67,7 +67,7 @@ const tests = {
             .then(resolve)
             .catch(reject);
         
-        emitter.off('event');
+        emitter.off('event', 'reject');
     }
 }
 
@@ -80,7 +80,7 @@ Promise.all(Object.keys(tests).map(testName => {
 
     return new Promise((resolve, reject) => {
         console.time(testName);
-        setTimeout(() => reject('timeout'), 500);
+        setTimeout(() => reject('timeout'), 700);
         tests[testName](resolve, reject, new PromiseEmitter());
     })
         .then(timeEnd('log'))
